@@ -1,0 +1,52 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            openjdk-17-jdk \
+            autoconf libtool pkg-config \
+            zlib1g-dev libncurses5-dev \
+            cmake libffi-dev libssl-dev \
+            build-essential git zip unzip wget \
+            libsqlite3-dev
+
+      - name: Install Python dependencies
+        run: |
+          pip install buildozer cython virtualenv
+          pip install jdatetime pandas openpyxl
+
+      - name: Download Vazir font
+        run: |
+          mkdir -p assets/fonts
+          wget https://github.com/rastikerdar/vazirmatn/releases/download/v33.003/VazirMatn-v33.003.zip -O /tmp/vazir.zip
+          unzip /tmp/vazir.zip -d /tmp/vazir
+          find /tmp/vazir -name "Vazirmatn-Regular.ttf" | head -1 | xargs -I{} cp {} assets/fonts/Vazir.ttf
+
+      - name: Build APK
+        run: |
+          buildozer android debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: hesabdar-apk
+          path: bin/*.apk
