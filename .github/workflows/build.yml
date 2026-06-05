@@ -43,7 +43,7 @@ jobs:
 
       - name: Build APK
         run: |
-          buildozer -v android debug 2>&1 | tail -100
+          buildozer -v android debug 2>&1 | grep -A5 -B5 "Error\|error\|Exception\|failed" | tail -50
 
       - name: Find APK
         run: find / -name "*.apk" 2>/dev/null || echo "No APK found"
