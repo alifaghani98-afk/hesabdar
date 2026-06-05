@@ -47,7 +47,12 @@ jobs:
           grep -i "error\|exception\|failed\|traceback" /tmp/build_log.txt | head -30
 
       - name: Find APK
-        run: find / -name "*.apk" 2>/dev/null || echo "No APK found"
+        if: always()
+        run: |
+          echo "=== Searching for APK ==="
+          find /home/runner -name "*.apk" 2>/dev/null || echo "No APK found"
+          echo "=== Build directory ==="
+          ls bin/ 2>/dev/null || echo "No bin directory"
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
