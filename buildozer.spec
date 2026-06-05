@@ -1,0 +1,37 @@
+[app]
+
+# ── Identity ──────────────────────────────────────────────────────────────────
+title           = حسابدار
+package.name    = hesabdar
+package.domain  = org.hesabdar
+version         = 1.0.0
+
+# ── Source ────────────────────────────────────────────────────────────────────
+source.dir      = .
+source.include_exts = py,kv,ttf,db,json,txt
+source.exclude_dirs = tests, .git, __pycache__, .buildozer
+
+# ── Python requirements ───────────────────────────────────────────────────────
+# jdatetime: Persian calendar
+# pandas + openpyxl: Excel export
+requirements = python3,kivy==2.3.0,jdatetime,pandas,openpyxl,sqlite3
+
+# ── Assets ────────────────────────────────────────────────────────────────────
+presplash.filename = %(source.dir)s/assets/presplash.png
+icon.filename      = %(source.dir)s/assets/icon.png
+
+# ── Android ───────────────────────────────────────────────────────────────────
+android.permissions = WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE
+android.api         = 33
+android.minapi      = 21
+android.ndk         = 25b
+android.archs       = arm64-v8a, armeabi-v7a
+android.allow_backup = True
+
+# Orientation
+orientation = portrait
+
+# ── Build ─────────────────────────────────────────────────────────────────────
+[buildozer]
+log_level = 2
+warn_on_root = 1

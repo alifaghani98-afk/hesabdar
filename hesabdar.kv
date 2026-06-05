@@ -1,0 +1,536 @@
+# hesabdar.kv  – Kivy language UI definitions
+# All text is in Persian; layout is RTL.
+
+#:set CLR_PRIMARY    (0.13, 0.47, 0.71, 1)
+#:set CLR_ACCENT     (0.96, 0.62, 0.04, 1)
+#:set CLR_BG         (0.96, 0.96, 0.97, 1)
+#:set CLR_CARD       (1,    1,    1,    1)
+#:set CLR_DEBIT      (0.83, 0.18, 0.18, 1)
+#:set CLR_CREDIT     (0.13, 0.63, 0.28, 1)
+#:set CLR_TEXT       (0.15, 0.15, 0.20, 1)
+#:set CLR_HINT       (0.55, 0.55, 0.60, 1)
+#:set CLR_DIVIDER    (0.88, 0.88, 0.90, 1)
+#:set FONT_MAIN      'Vazir'
+
+<RTLLabel@Label>:
+    halign: 'right'
+    text_size: self.width, None
+    color: CLR_TEXT
+    font_name: FONT_MAIN
+
+<RTLTextInput@TextInput>:
+    halign: 'right'
+    write_tab: False
+    font_name: FONT_MAIN
+    padding: [12, 10, 12, 10]
+    background_color: CLR_CARD
+    foreground_color: CLR_TEXT
+    hint_text_color: CLR_HINT
+    cursor_color: CLR_PRIMARY
+
+<PrimaryButton@Button>:
+    background_normal: ''
+    background_color: CLR_PRIMARY
+    color: 1, 1, 1, 1
+    font_name: FONT_MAIN
+    size_hint_y: None
+    height: dp(48)
+    border_radius: [8, 8, 8, 8]
+
+<DangerButton@Button>:
+    background_normal: ''
+    background_color: CLR_DEBIT
+    color: 1, 1, 1, 1
+    font_name: FONT_MAIN
+    size_hint_y: None
+    height: dp(44)
+
+<AccentButton@Button>:
+    background_normal: ''
+    background_color: CLR_ACCENT
+    color: 0.1, 0.1, 0.1, 1
+    font_name: FONT_MAIN
+    size_hint_y: None
+    height: dp(44)
+
+<SummaryBar@BoxLayout>:
+    orientation: 'horizontal'
+    size_hint_y: None
+    height: dp(56)
+    padding: dp(8)
+    spacing: dp(4)
+    canvas.before:
+        Color:
+            rgba: CLR_PRIMARY
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<CardBox@BoxLayout>:
+    orientation: 'vertical'
+    padding: dp(12)
+    spacing: dp(8)
+    canvas.before:
+        Color:
+            rgba: CLR_CARD
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [8,]
+
+# ─── Main Screen ──────────────────────────────────────────────────────────────
+<MainScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        canvas.before:
+            Color:
+                rgba: CLR_BG
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        # Top toolbar
+        BoxLayout:
+            size_hint_y: None
+            height: dp(56)
+            padding: dp(8)
+            canvas.before:
+                Color:
+                    rgba: CLR_PRIMARY
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            RTLLabel:
+                text: 'حسابدار'
+                font_size: sp(20)
+                bold: True
+                color: 1, 1, 1, 1
+                halign: 'center'
+
+        # Navigation tabs
+        BoxLayout:
+            size_hint_y: None
+            height: dp(48)
+            spacing: dp(2)
+            padding: [dp(4), dp(4)]
+            Button:
+                id: tab_projects
+                text: 'پروژه‌ها'
+                font_name: FONT_MAIN
+                on_press: root.show_tab('projects')
+            Button:
+                id: tab_counterparties
+                text: 'طرف حساب‌ها'
+                font_name: FONT_MAIN
+                on_press: root.show_tab('counterparties')
+            Button:
+                id: tab_transactions
+                text: 'تراکنش‌ها'
+                font_name: FONT_MAIN
+                on_press: root.show_tab('transactions')
+            Button:
+                id: tab_reports
+                text: 'گزارش'
+                font_name: FONT_MAIN
+                on_press: root.show_tab('reports')
+
+        # Content area
+        ScreenManager:
+            id: sm
+            ProjectsScreen:
+                name: 'projects'
+            CounterpartiesScreen:
+                name: 'counterparties'
+            TransactionsScreen:
+                name: 'transactions'
+            ReportsScreen:
+                name: 'reports'
+
+        # Global summary bar
+        SummaryBar:
+            id: summary_bar
+            RTLLabel:
+                id: lbl_debit
+                text: 'بدهکار: ۰'
+                color: (1, 0.7, 0.7, 1)
+                font_size: sp(13)
+                halign: 'center'
+            RTLLabel:
+                id: lbl_credit
+                text: 'بستانکار: ۰'
+                color: (0.7, 1, 0.7, 1)
+                font_size: sp(13)
+                halign: 'center'
+            RTLLabel:
+                id: lbl_balance
+                text: 'مانده: ۰'
+                color: 1, 1, 1, 1
+                font_size: sp(13)
+                bold: True
+                halign: 'center'
+
+# ─── Projects Screen ─────────────────────────────────────────────────────────
+<ProjectsScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(8)
+        spacing: dp(8)
+
+        BoxLayout:
+            size_hint_y: None
+            height: dp(44)
+            spacing: dp(8)
+            RTLLabel:
+                text: 'لیست پروژه‌ها'
+                font_size: sp(16)
+                bold: True
+            PrimaryButton:
+                text: '+ پروژه جدید'
+                size_hint_x: None
+                width: dp(130)
+                on_press: root.open_add_project()
+
+        ScrollView:
+            RecycleView:
+                id: rv_projects
+                viewclass: 'ProjectRow'
+                RecycleBoxLayout:
+                    default_size: None, dp(64)
+                    default_size_hint: 1, None
+                    size_hint_y: None
+                    height: self.minimum_height
+                    orientation: 'vertical'
+                    spacing: dp(4)
+
+<ProjectRow@BoxLayout>:
+    project_id: 0
+    project_name: ''
+    project_desc: ''
+    screen_ref: None
+    orientation: 'horizontal'
+    size_hint_y: None
+    height: dp(64)
+    padding: dp(8)
+    spacing: dp(8)
+    canvas.before:
+        Color:
+            rgba: (1, 1, 1, 1)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [6,]
+
+    BoxLayout:
+        orientation: 'vertical'
+        RTLLabel:
+            text: root.project_name
+            bold: True
+            font_size: sp(15)
+        RTLLabel:
+            text: root.project_desc
+            font_size: sp(12)
+            color: CLR_HINT
+
+    Button:
+        text: 'ویرایش'
+        font_name: FONT_MAIN
+        size_hint_x: None
+        width: dp(72)
+        on_press: root.screen_ref.open_edit_project(root.project_id) if root.screen_ref else None
+    Button:
+        text: 'حذف'
+        font_name: FONT_MAIN
+        size_hint_x: None
+        width: dp(60)
+        background_color: CLR_DEBIT
+        background_normal: ''
+        color: 1, 1, 1, 1
+        on_press: root.screen_ref.confirm_delete_project(root.project_id) if root.screen_ref else None
+
+# ─── Counterparties Screen ───────────────────────────────────────────────────
+<CounterpartiesScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(8)
+        spacing: dp(8)
+
+        BoxLayout:
+            size_hint_y: None
+            height: dp(44)
+            spacing: dp(8)
+            RTLLabel:
+                text: 'لیست طرف حساب‌ها'
+                font_size: sp(16)
+                bold: True
+            PrimaryButton:
+                text: '+ طرف حساب جدید'
+                size_hint_x: None
+                width: dp(160)
+                on_press: root.open_add_counterparty()
+
+        ScrollView:
+            RecycleView:
+                id: rv_counterparties
+                viewclass: 'CounterpartyRow'
+                RecycleBoxLayout:
+                    default_size: None, dp(64)
+                    default_size_hint: 1, None
+                    size_hint_y: None
+                    height: self.minimum_height
+                    orientation: 'vertical'
+                    spacing: dp(4)
+
+<CounterpartyRow@BoxLayout>:
+    cp_id: 0
+    cp_name: ''
+    cp_phone: ''
+    screen_ref: None
+    orientation: 'horizontal'
+    size_hint_y: None
+    height: dp(64)
+    padding: dp(8)
+    spacing: dp(8)
+    canvas.before:
+        Color:
+            rgba: (1, 1, 1, 1)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [6,]
+
+    BoxLayout:
+        orientation: 'vertical'
+        RTLLabel:
+            text: root.cp_name
+            bold: True
+            font_size: sp(15)
+        RTLLabel:
+            text: root.cp_phone
+            font_size: sp(12)
+            color: CLR_HINT
+
+    Button:
+        text: 'ویرایش'
+        font_name: FONT_MAIN
+        size_hint_x: None
+        width: dp(72)
+        on_press: root.screen_ref.open_edit_counterparty(root.cp_id) if root.screen_ref else None
+    Button:
+        text: 'حذف'
+        font_name: FONT_MAIN
+        size_hint_x: None
+        width: dp(60)
+        background_color: CLR_DEBIT
+        background_normal: ''
+        color: 1, 1, 1, 1
+        on_press: root.screen_ref.confirm_delete_counterparty(root.cp_id) if root.screen_ref else None
+
+# ─── Transactions Screen ─────────────────────────────────────────────────────
+<TransactionsScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(8)
+        spacing: dp(8)
+
+        BoxLayout:
+            size_hint_y: None
+            height: dp(44)
+            spacing: dp(8)
+            RTLLabel:
+                text: 'تراکنش‌ها'
+                font_size: sp(16)
+                bold: True
+            PrimaryButton:
+                text: '+ تراکنش جدید'
+                size_hint_x: None
+                width: dp(150)
+                on_press: root.open_add_transaction()
+
+        # Filter bar
+        BoxLayout:
+            size_hint_y: None
+            height: dp(40)
+            spacing: dp(8)
+            RTLLabel:
+                text: 'فیلتر پروژه:'
+                size_hint_x: None
+                width: dp(90)
+                font_size: sp(13)
+            Spinner:
+                id: sp_filter_project
+                text: 'همه پروژه‌ها'
+                font_name: FONT_MAIN
+                on_text: root.apply_filters()
+            Spinner:
+                id: sp_filter_cp
+                text: 'همه طرف حساب‌ها'
+                font_name: FONT_MAIN
+                on_text: root.apply_filters()
+
+        ScrollView:
+            RecycleView:
+                id: rv_transactions
+                viewclass: 'TransactionRow'
+                RecycleBoxLayout:
+                    default_size: None, dp(80)
+                    default_size_hint: 1, None
+                    size_hint_y: None
+                    height: self.minimum_height
+                    orientation: 'vertical'
+                    spacing: dp(4)
+
+<TransactionRow@BoxLayout>:
+    tx_id: 0
+    tx_row: 0
+    tx_date: ''
+    tx_desc: ''
+    tx_debit: 0
+    tx_credit: 0
+    tx_project: ''
+    tx_cp: ''
+    screen_ref: None
+    orientation: 'vertical'
+    size_hint_y: None
+    height: dp(80)
+    padding: [dp(8), dp(6)]
+    spacing: dp(4)
+    canvas.before:
+        Color:
+            rgba: (1, 1, 1, 1)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [6,]
+
+    BoxLayout:
+        RTLLabel:
+            text: '[b]' + str(root.tx_row) + '[/b] - ' + root.tx_desc
+            markup: True
+            font_size: sp(14)
+        RTLLabel:
+            text: root.tx_date
+            font_size: sp(12)
+            color: CLR_HINT
+            halign: 'left'
+
+    BoxLayout:
+        RTLLabel:
+            text: ('بدهکار: ' + '{:,.0f}'.format(root.tx_debit)) if root.tx_debit > 0 else ''
+            color: CLR_DEBIT
+            font_size: sp(13)
+        RTLLabel:
+            text: ('بستانکار: ' + '{:,.0f}'.format(root.tx_credit)) if root.tx_credit > 0 else ''
+            color: CLR_CREDIT
+            font_size: sp(13)
+        Button:
+            text: 'ویرایش'
+            font_name: FONT_MAIN
+            size_hint_x: None
+            width: dp(70)
+            on_press: root.screen_ref.open_edit_transaction(root.tx_id) if root.screen_ref else None
+        Button:
+            text: 'حذف'
+            font_name: FONT_MAIN
+            size_hint_x: None
+            width: dp(58)
+            background_color: CLR_DEBIT
+            background_normal: ''
+            color: 1, 1, 1, 1
+            on_press: root.screen_ref.confirm_delete_transaction(root.tx_id) if root.screen_ref else None
+
+# ─── Reports Screen ──────────────────────────────────────────────────────────
+<ReportsScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(12)
+        spacing: dp(12)
+
+        RTLLabel:
+            text: 'گزارش‌ها و خروجی اکسل'
+            font_size: sp(18)
+            bold: True
+            size_hint_y: None
+            height: dp(40)
+            halign: 'center'
+
+        ScrollView:
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: dp(12)
+
+                # System summary card
+                CardBox:
+                    size_hint_y: None
+                    height: dp(130)
+                    RTLLabel:
+                        text: 'خلاصه کل سیستم'
+                        font_size: sp(16)
+                        bold: True
+                        size_hint_y: None
+                        height: dp(30)
+                    RTLLabel:
+                        id: rpt_total_debit
+                        text: 'جمع بدهکار: -'
+                        color: CLR_DEBIT
+                    RTLLabel:
+                        id: rpt_total_credit
+                        text: 'جمع بستانکار: -'
+                        color: CLR_CREDIT
+                    RTLLabel:
+                        id: rpt_balance
+                        text: 'مانده: -'
+                        bold: True
+
+                # Export buttons
+                CardBox:
+                    size_hint_y: None
+                    height: dp(200)
+                    RTLLabel:
+                        text: 'خروجی اکسل'
+                        font_size: sp(15)
+                        bold: True
+                        size_hint_y: None
+                        height: dp(30)
+                    AccentButton:
+                        text: 'خروجی اکسل – همه تراکنش‌ها'
+                        on_press: root.export_full()
+                    BoxLayout:
+                        size_hint_y: None
+                        height: dp(44)
+                        spacing: dp(8)
+                        Spinner:
+                            id: sp_export_project
+                            text: 'انتخاب پروژه'
+                            font_name: FONT_MAIN
+                        AccentButton:
+                            text: 'خروجی پروژه'
+                            size_hint_x: None
+                            width: dp(120)
+                            on_press: root.export_project()
+                    BoxLayout:
+                        size_hint_y: None
+                        height: dp(44)
+                        spacing: dp(8)
+                        Spinner:
+                            id: sp_export_cp
+                            text: 'انتخاب طرف حساب'
+                            font_name: FONT_MAIN
+                        AccentButton:
+                            text: 'خروجی طرف حساب'
+                            size_hint_x: None
+                            width: dp(140)
+                            on_press: root.export_counterparty()
+
+                # Per-project summary table
+                CardBox:
+                    id: project_summary_box
+                    size_hint_y: None
+                    height: self.minimum_height
+                    RTLLabel:
+                        text: 'خلاصه بر اساس پروژه'
+                        font_size: sp(15)
+                        bold: True
+                        size_hint_y: None
+                        height: dp(30)
