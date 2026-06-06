@@ -43,8 +43,7 @@ jobs:
 
       - name: Build APK
         run: |
-          buildozer -v android debug 2>&1 > /tmp/build_log.txt || true
-          grep -i "error\|exception\|failed\|traceback" /tmp/build_log.txt | head -30
+          buildozer android debug
 
       - name: Find APK
         if: always()
