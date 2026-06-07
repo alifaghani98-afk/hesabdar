@@ -14,7 +14,7 @@ source.exclude_dirs = tests, .git, __pycache__, .buildozer
 # ── Python requirements ───────────────────────────────────────────────────────
 # jdatetime: Persian calendar
 # pandas + openpyxl: Excel export
-requirements = python3,kivy==2.3.0,jdatetime,openpyxl
+requirements = python3,kivy,jdatetime,openpyxl
 # ── Assets ────────────────────────────────────────────────────────────────────
 presplash.filename = %(source.dir)s/assets/presplash.png
 icon.filename      = %(source.dir)s/assets/icon.png
@@ -23,7 +23,7 @@ icon.filename      = %(source.dir)s/assets/icon.png
 android.permissions = WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE
 android.api         = 33
 android.minapi      = 24
-android.ndk         = 25b
+android.ndk         = 25c
 android.build_tools_version = 34.0.0
 android.accept_sdk_license = True
 android.archs       = arm64-v8a, armeabi-v7a
