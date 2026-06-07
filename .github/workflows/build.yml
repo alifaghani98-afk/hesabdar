@@ -31,7 +31,9 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          pip install buildozer==1.5.0 Cython==0.29.37 virtualenv
+          pip install buildozer==1.5.0
+          pip install Cython==0.29.33
+          pip install virtualenv
           pip install jdatetime openpyxl
 
       - name: Download Vazir font
