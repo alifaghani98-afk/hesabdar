@@ -14,7 +14,7 @@ source.exclude_dirs = tests, .git, __pycache__, .buildozer
 # ── Python requirements ───────────────────────────────────────────────────────
 # jdatetime: Persian calendar
 # pandas + openpyxl: Excel export
-requirements = python3,kivy,jdatetime,openpyxl
+requirements = python3,kivy==2.2.1,jdatetime,openpyxl
 # ── Assets ────────────────────────────────────────────────────────────────────
 presplash.filename = %(source.dir)s/assets/presplash.png
 icon.filename      = %(source.dir)s/assets/icon.png
